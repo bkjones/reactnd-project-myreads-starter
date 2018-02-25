@@ -37,6 +37,7 @@ class Library extends Component {
                 shortName="wantToRead"
                 name="Want to Read"
                 books={this.state.books}
+                mover={this.changeBookshelf}
               />
               <div className="bookshelf">
                 <h2 className="bookshelf-title">Want to Read</h2>
