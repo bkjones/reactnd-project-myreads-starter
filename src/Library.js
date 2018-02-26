@@ -43,25 +43,6 @@ class Library extends Component {
 
     changeBookshelf = (bookId, e) => {
         const newShelf = e.target.value
-        this.setState((state) => {
-            BooksAPI.update({id: bookId}, newShelf).then((response) => {
-                for(var shelf in state.bookshelves){
-                    for(var idx=0; idx < state.bookshelves[shelf].length; idx++){
-                        if(state.bookshelves[shelf][idx].id === bookId){
-                            const bookToMove = state.bookshelves[shelf].splice(idx, 1)[0]
-                            state.bookshelves[newShelf].push(bookToMove)
-                            console.log("Bookshelves updated: ", state.bookshelves)
-                            break
-                        }
-                    }
-                }
-            }).catch(err => console.log("Error! ", err))
-            console.log("Changing bookshelves in this.state: ", state.bookshelves)
-            return {bookshelves: state.bookshelves}
-        })
-    }
-    changeBookshelfBak = (bookId, e) => {
-        const newShelf = e.target.value
         let bookshelves = Object.assign({}, this.state.bookshelves)
         BooksAPI.update({id: bookId}, newShelf).then((response) => {
             for(var shelf in bookshelves){
