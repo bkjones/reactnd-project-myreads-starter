@@ -20,23 +20,67 @@ class Library extends Component {
         }
     }
     componentDidMount(){
-        /* Get all books & put them in the proper shelves. */
-        let bookshelves = this.state.bookshelves
-        BooksAPI.getAll().then(books => {
-            for(let shelf in bookshelves){
-                bookshelves[shelf] = books.filter(b => b.shelf === shelf)
+        /* If there are no books, get all books & put them in the proper shelves. */
+        let bookshelves = Object.assign({}, this.state.bookshelves)
+        let bookshelvesPopulated = false
+        for(let s in bookshelves){
+            if(bookshelves[s].length > 0){
+                bookshelvesPopulated = true
+                return;
             }
-            this.setState({bookshelves})
-        })
+        }
+
+        if(!bookshelvesPopulated){
+            BooksAPI.getAll().then(books => {
+                for(let shelf in bookshelves){
+                    bookshelves[shelf] = books.filter(b => b.shelf === shelf)
+                }
+                console.log("\"this\" is set to: ", this)
+                this.setState({bookshelves})
+            })
+        }
     }
 
-    changeBookshelf(bookId, e){
-        BooksAPI.update({id: bookId}, e.target.value).then(response =>
-            this.setState({bookshelves: response})
-        )
+    changeBookshelf = (bookId, e) => {
+        const newShelf = e.target.value
+        this.setState((state) => {
+            BooksAPI.update({id: bookId}, newShelf).then((response) => {
+                for(var shelf in state.bookshelves){
+                    for(var idx=0; idx < state.bookshelves[shelf].length; idx++){
+                        if(state.bookshelves[shelf][idx].id === bookId){
+                            const bookToMove = state.bookshelves[shelf].splice(idx, 1)[0]
+                            state.bookshelves[newShelf].push(bookToMove)
+                            console.log("Bookshelves updated: ", state.bookshelves)
+                            break
+                        }
+                    }
+                }
+            }).catch(err => console.log("Error! ", err))
+            console.log("Changing bookshelves in this.state: ", state.bookshelves)
+            return {bookshelves: state.bookshelves}
+        })
+    }
+    changeBookshelfBak = (bookId, e) => {
+        const newShelf = e.target.value
+        let bookshelves = Object.assign({}, this.state.bookshelves)
+        BooksAPI.update({id: bookId}, newShelf).then((response) => {
+            for(var shelf in bookshelves){
+                for(var idx=0; idx < bookshelves[shelf].length; idx++){
+                    if(bookshelves[shelf][idx].id === bookId){
+                        const bookToMove = bookshelves[shelf].splice(idx, 1)[0]
+                        bookshelves[newShelf].push(bookToMove)
+                        console.log("Bookshelves updated: ", bookshelves)
+                        break
+                    }
+                }
+            }
+            console.log(this)
+            this.setState((state) => ({bookshelves: bookshelves}));
+        }).catch(err => console.log("Error! ", err))
     }
 
     render() {
+        console.log("Library state: ", this.state)
         return(
           <div className="list-books-content">
             <div>

@@ -3,7 +3,6 @@ import BookMover from './BookMover'
 
 class Book extends Component {
     render(){
-        console.log("Book props", this.props)
         return(
             <div className="book">
               <div className="book-top">

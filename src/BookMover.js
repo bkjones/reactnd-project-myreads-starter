@@ -11,7 +11,6 @@ A challenge here is that the select list must show the same state whether we're
 in a bookshelf or in the search page. I haven't figured that out yet, but regardless,
 it seems this will need to be attached to a book, but be manipulated at the library level.*/
     render(){
-        console.log("Bookmover props", this.props)
         return(
             <div className="book-shelf-changer">
               <select value={this.props.selected} onChange={(e) => this.props.mover(this.props.bookId, e)}>
