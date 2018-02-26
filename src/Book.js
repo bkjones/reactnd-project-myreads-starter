@@ -10,6 +10,7 @@ class Book extends Component {
                 <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${this.props.cover})`}}></div>
                     <BookMover
                         mover={this.props.mover}
+                        bookId={this.props.bookId}
                         selected={this.props.shelfId}
                     />
               </div>

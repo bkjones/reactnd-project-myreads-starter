@@ -13,6 +13,7 @@ class Bookshelf extends Component {
                       <li key={book.id}>
                         <Book
                             title={book.title}
+                            bookId={book.id}
                             authors={book.authors}
                             cover={book.imageLinks['smallThumbnail']}
                             mover={this.props.mover}
