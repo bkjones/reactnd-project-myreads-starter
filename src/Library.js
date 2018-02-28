@@ -19,6 +19,50 @@ class Library extends Component {
             "read": []
         }
     }
+
+    changeBookshelf = (bookId, e) => {
+        const newShelf = e.target.value;
+        let updatedBook;
+
+        BooksAPI.update({id: bookId}, newShelf).then(() => {
+          const newBookShelves = Object.entries(this.state.bookshelves).map((entries) => {
+          const bookShelf = entries[0];
+            const books = entries[1];
+             return {
+               // save and filter out the updated book
+               [bookShelf]: books.filter(book => {
+                 if (book.id === bookId) {
+                   updatedBook = Object.assign({}, book, {
+                     shelf: newShelf
+                   });
+                   return false
+                 } else {
+                   return true;
+                 }
+               })
+             }
+           });
+
+           // we create a new object to use in updating the state
+           const bookShelves = {};
+
+           // take every object in the array
+           for (const entry of newBookShelves) {
+             // since each object has only one key we take the first element
+             const bookShelf = Object.keys(entry)[0];
+             bookShelves[bookShelf] = entry[bookShelf];
+
+             // put our updated book in the suitable shelf
+             if (bookShelf === updatedBook.shelf) {
+               bookShelves[bookShelf].push(updatedBook)
+             }
+           }
+
+           // update the state with the new object
+           this.setState({ bookshelves: bookShelves })
+         })
+       }
+
     componentDidMount(){
         /* Get all books & put them in the proper shelves. */
         let bookshelves = this.state.bookshelves
@@ -30,7 +74,7 @@ class Library extends Component {
         })
     }
 
-    changeBookshelf(bookId, e){
+    foochangeBookshelf(bookId, e){
         BooksAPI.update({id: bookId}, e.target.value).then(response =>
             this.setState({bookshelves: response})
         )
