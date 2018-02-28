@@ -2,6 +2,7 @@ import React from 'react'
 // import * as BooksAPI from './BooksAPI'
 import './App.css'
 import Library from './Library'
+import { Route } from 'react-router-dom'
 
 class BooksApp extends React.Component {
   state = {
@@ -42,12 +43,14 @@ class BooksApp extends React.Component {
           </div>
         ) : (
             <div className='list-library-contents'>
-                <Library />
+                <Route exact path='/' render={({ history }) => (
+                    <Library />
+                )}/>
                 <div className="open-search">
                   <a onClick={() => this.setState({ showSearchPage: true })}>Add a book</a>
                 </div>
 
-          </div>
+            </div>
         )}
       </div>
     )
