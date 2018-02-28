@@ -86,17 +86,17 @@ class Library extends Component {
           <div className="list-books-content">
             <div>
               <Bookshelf
-                key="wantToRead"
-                shortName="wantToRead"
-                name="Want to Read"
-                books={this.state.bookshelves["wantToRead"]}
-                mover={this.changeBookshelf}
-              />
-              <Bookshelf
                 key="currentlyReading"
                 shortName="currentlyReading"
                 name="Currently Reading"
                 books={this.state.bookshelves["currentlyReading"]}
+                mover={this.changeBookshelf}
+              />
+              <Bookshelf
+                key="wantToRead"
+                shortName="wantToRead"
+                name="Want to Read"
+                books={this.state.bookshelves["wantToRead"]}
                 mover={this.changeBookshelf}
               />
               <Bookshelf
