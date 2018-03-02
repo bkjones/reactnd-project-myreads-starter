@@ -13,99 +13,57 @@ class Library extends Component {
     * That way, you can perform the same actions on a book from either screen.
     */
     state = {
-        bookshelves: {
-            "currentlyReading": [],
-            "wantToRead": [],
-            "read": []
-        }
+        books: [],
     }
 
     changeBookshelf = (bookId, e) => {
-        const newShelf = e.target.value;
-        let updatedBook;
+        const newShelf = e.target.value
+        let updatedBooks = []
 
-        // do the server-side update on the book
         BooksAPI.update({id: bookId}, newShelf).then(() => {
-            const newBookShelves = Object.entries(this.state.bookshelves).map((entries) => {
-            const [bookShelf, books] = entries;
-            return {
-                // pull out the updated book
-                [bookShelf]: books.filter(book => {
-                    if (book.id === bookId) {
-                        // create the book object that'll go into the new shelf
-                        updatedBook = Object.assign({}, book, {
-                            shelf: newShelf
-                        });
-                        return false
-                    } else {
-                        return true;
-                    }
-                })
-            }
-            });
-
-            // clean object used to update state
-            const bookShelves = {};
-
-            // take every object in the array
-            for (const entry of newBookShelves) {
-                const bookShelf = Object.keys(entry)[0];
-                bookShelves[bookShelf] = entry[bookShelf];
-
-                // put our updated book in the suitable shelf
-                if (bookShelf === updatedBook.shelf) {
-                    bookShelves[bookShelf].push(updatedBook)
+            this.state.books.map(book => {
+                if(book.id === bookId){
+                    const bookToUpdate = Object.assign({}, book, {shelf: newShelf});
+                    updatedBooks.push(bookToUpdate)
+                } else {
+                    updatedBooks.push(book)
                 }
-            }
-
-            // update the state with the new bookShelf object.
-            //This needs to happen inside of BooksAPI.update().then
-            this.setState({ bookshelves: bookShelves })
+                return true
+            })
+            this.setState({books: updatedBooks})
         })
     }
 
     componentDidMount(){
         /* Get all books & put them in the proper shelves. */
-        let bookshelves = this.state.bookshelves
-        BooksAPI.getAll().then(books => {
-            for(let shelf in bookshelves){
-                bookshelves[shelf] = books.filter(b => b.shelf === shelf)
-            }
-            this.setState({bookshelves})
-        })
+        //BooksAPI.getAll().then(books => console.log("BOOKS: ", books))
+        BooksAPI.getAll().then(books => this.setState({books}))
     }
 
-    foochangeBookshelf(bookId, e){
-        BooksAPI.update({id: bookId}, e.target.value).then(response =>
-            this.setState({bookshelves: response})
-        )
+    getUniqueShelfNames = (books) => {
+        console.log("books in getUniqueShelfNames: ", books)
+        let shelfNames = new Set()
+        books.map(book => shelfNames.add(book.shelf))
+        console.log("shelfNames: ", shelfNames)
+        return shelfNames
     }
 
     render() {
+        const shelfNames = this.getUniqueShelfNames(this.state.books)
         return(
           <div className="list-books-content">
             <div>
-              <Bookshelf
-                key="currentlyReading"
-                shortName="currentlyReading"
-                name="Currently Reading"
-                books={this.state.bookshelves["currentlyReading"]}
-                mover={this.changeBookshelf}
-              />
-              <Bookshelf
-                key="wantToRead"
-                shortName="wantToRead"
-                name="Want to Read"
-                books={this.state.bookshelves["wantToRead"]}
-                mover={this.changeBookshelf}
-              />
-              <Bookshelf
-                key="read"
-                shortName="read"
-                name="Read"
-                books={this.state.bookshelves["read"]}
-                mover={this.changeBookshelf}
-              />
+                {
+                    Array.from(shelfNames).map(shelf =>
+                        <div key={shelf}>
+                        <Bookshelf
+                            shortName={shelf}
+                            books={this.state.books}
+                            mover={this.changeBookshelf}
+                        />
+                        </div>
+                    )
+                }
             </div>
           </div>
       )
