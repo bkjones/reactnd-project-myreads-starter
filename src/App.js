@@ -6,28 +6,30 @@ import * as BooksAPI from './BooksAPI'
 
 class BooksApp extends React.Component {
     state = {
-        query: ''
+        searchResults: []
     }
 
     updateQuery = (query) => {
-        this.setState({ query: query })
+        if(query){
+            BooksAPI.search(query).then((response) => {
+                if(response.error){
+                    this.setState({searchResults: []})
+                } else {
+                this.setState({searchResults: response})
+                }
+            })
+        } else {
+            this.setState({searchResults: []})
+        }
     }
 
     clearQuery = () => {
         this.setState({query: ''})
     }
 
+
     render() {
-        let searchResults = []
-        let query = this.state.query
-        if (query){
-            BooksAPI.search(query).then((response) => {
-                console.log("Search response: ", response)
-                searchResults = response
-            })
-        } else {
-            searchResults = []
-        }
+        console.log("searchResults: ", this.state.searchResults)
         return (
             <div className="app">
                 <Route path='/search' render={({history}) => (
@@ -41,15 +43,14 @@ class BooksApp extends React.Component {
                                 <input
                                     type='text'
                                     placeholder='Search by title or author'
-                                    value={query}
                                     onChange={(event) => this.updateQuery(event.target.value)}
                                 />
                             </div>
                         </div>
                         <div className="search-books-results">
                             <ol className="books-grid">
-                                {searchResults.map(book =>
-                                    <li>{book}</li>
+                                {this.state.searchResults.map(book =>
+                                    <li key={book.id}>{book.title}</li>
                                 )}
                             </ol>
                         </div>
