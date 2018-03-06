@@ -23,10 +23,9 @@ class BooksApp extends React.Component {
         }
     }
 
-    clearQuery = () => {
-        this.setState({query: ''})
+    clearSearchResults = () => {
+        this.setState({searchResults: []})
     }
-
 
     render() {
         console.log("searchResults: ", this.state.searchResults)
@@ -38,6 +37,7 @@ class BooksApp extends React.Component {
                             <Link
                                 to='/'
                                 className="close-search"
+                                onClick={this.clearSearchResults}
                             >Close</Link>
                             <div className="search-books-input">
                                 <input
@@ -48,11 +48,7 @@ class BooksApp extends React.Component {
                             </div>
                         </div>
                         <div className="search-books-results">
-                            <ol className="books-grid">
-                                {this.state.searchResults.map(book =>
-                                    <li key={book.id}>{book.title}</li>
-                                )}
-                            </ol>
+                            <Library searchResults={this.state.searchResults} />
                         </div>
                     </div>
                 )}/>

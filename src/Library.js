@@ -30,28 +30,57 @@ class Library extends Component {
     }
 
     componentDidMount(){
-        /* Get all books & put them in the proper shelves. */
         BooksAPI.getAll().then(books => this.setState({books}))
     }
 
     render() {
-        return(
-          <div className="list-books-content">
-            <div>
-                {
-                    this.state.shelfShortNames.map(shelf =>
-                        <div key={shelf}>
+        console.log(this)
+        if('searchResults' in this.props){
+            let resultBooks = []
+            this.props.searchResults.forEach(resultBook => {
+                let matchingStateBook = this.state.books.filter(b => b.id === resultBook.id)
+                if(matchingStateBook.length === 1){
+                    console.log("matchingStateBook: ", matchingStateBook)
+                    resultBook.shelf = matchingStateBook[0].shelf
+                    resultBooks.push(resultBook)
+                } else {
+                    resultBooks.push(resultBook)
+                }
+            })
+            console.log("resultBooks: ", resultBooks)
+
+            return(
+              <div className="list-books-content">
+                <div>
+                    {
                         <Bookshelf
-                            shortName={shelf}
-                            books={this.state.books}
+                            shortName="searchResults"
+                            books={resultBooks}
                             mover={this.changeBookshelf}
                         />
-                        </div>
-                    )
-                }
-            </div>
-          </div>
-      )
+                    }
+                </div>
+              </div>
+          )
+      } else {
+            return(
+              <div className="list-books-content">
+                <div>
+                    {
+                        this.state.shelfShortNames.map(shelf =>
+                            <div key={shelf}>
+                            <Bookshelf
+                                shortName={shelf}
+                                books={this.state.books}
+                                mover={this.changeBookshelf}
+                            />
+                            </div>
+                        )
+                    }
+                </div>
+              </div>
+            )
+        }
     }
 }
 
