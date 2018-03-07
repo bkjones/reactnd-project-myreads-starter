@@ -34,7 +34,6 @@ class Library extends Component {
     }
 
     render() {
-        console.log(this)
         if('searchResults' in this.props){
             let resultBooks = []
             this.props.searchResults.forEach(resultBook => {
