@@ -10,7 +10,7 @@ class BookMover extends Component{
     render(){
         return(
             <div className="book-shelf-changer">
-              <select value={this.props.selected} onChange={(e) => this.props.mover(this.props.bookId, e)}>
+              <select value={this.props.selected} onChange={(e) => this.props.mover(this.props.book, e)}>
                 <option disabled>Move to...</option>
                 <option value="currentlyReading">Currently Reading</option>
                 <option value="wantToRead">Want to Read</option>
